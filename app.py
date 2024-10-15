@@ -1,4 +1,4 @@
-from flask import Flask, make_response
+from flask import Flask, make_response,request
 from flask_migrate import Migrate
 from models import *
 
@@ -11,12 +11,22 @@ migrate = Migrate(app, db)
 db.init_app(app)
 
 # Initialize Flask-Migrate with the app and db
-@app.route('/users')
+@app.route('/users', methods=['POST','GET'])
 def users():
-    users = User.query.all()
-    response = [user.to_dict() for user in User.query.all()]
+    # users = User.query.all()
+    if request.method=='POST':
+        response = [user.to_dict() for user in User.query.all()]
+        
     
-    return make_response(response,200)
+        return make_response(response,200)
+@app.route('/posts',methods = ['POST','GET'])
+def posts():
+    # posts = Post.query.all()
+    response = [post.to_dict() for post in Post.query.all()]
+    
+    return make_response(response, 200)
+    
+
 @app.route('/')
 def index():
     return 'Welcome to flask'
