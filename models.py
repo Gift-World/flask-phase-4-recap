@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import validates
+from sqlalchemy_serializer import SerializerMixin
 
 db = SQLAlchemy()
 # Association table
@@ -8,8 +9,10 @@ user_groups = db.Table('user_groups',
                       db.Column('group_id', db.Integer, db.ForeignKey('groups.id'))
                       )
 
-class User(db.Model):
+class User(db.Model,SerializerMixin):
     __tablename__ = 'users'
+    serialize_rules = ('-posts.user', '-groups.users',)
+    
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     address = db.Column(db.String(120), unique=True, nullable=False)
@@ -25,7 +28,7 @@ class User(db.Model):
     
   # Use 'email' instead of 'emails'
   
-class Post(db.Model):
+class Post(db.Model,SerializerMixin):
     __tablename__ = 'posts'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120), nullable=False)
@@ -35,7 +38,7 @@ class Post(db.Model):
     user = db.relationship('User', back_populates='posts')  
     
     
-class Group(db.Model):
+class Group(db.Model,SerializerMixin):
     __tablename__ = 'groups'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
