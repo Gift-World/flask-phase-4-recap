@@ -17,6 +17,8 @@ def users():
     if request.method=='POST':
         response = [user.to_dict() for user in User.query.all()]
         
+        data = request.get_json()
+        
     
         return make_response(response,200)
 @app.route('/posts',methods = ['POST','GET'])
