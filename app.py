@@ -13,15 +13,20 @@ db.init_app(app)
 # Initialize Flask-Migrate with the app and db
 @app.route('/users', methods=['POST','GET'])
 def users():
-    # users = User.query.all()
-    if request.method=='POST':
+    if request.method=='GET':    
         response = [user.to_dict() for user in User.query.all()]
-        
+        return make_response(response,200)
+    if request.method=='POST':    
         data = request.get_json()
+        new_user = User(username = data['username'], address=data['address'])
+        db.session.add(new_user)
+        db.session.commit()
+        
+        return make_response({"message":"Success"}, 200)
         
     
-        return make_response(response,200)
-@app.route('/posts',methods = ['POST','GET'])
+        
+@app.route('/posts/<int:id>',methods = ['DELETE','PATCH','GET'])
 def posts():
     # posts = Post.query.all()
     response = [post.to_dict() for post in Post.query.all()]
